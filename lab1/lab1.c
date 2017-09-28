@@ -22,21 +22,19 @@ int main(int argc, char *argv[])  {
         }
         else {
             int n_children = range_max - range_min;
-            pid_t pids[n_children];
-            for (int i=range_min,j; i<=range_max; i++,j++) {
-                if ((pids[j] = fork()) < 0) {
+            pid_t pid;
+            for (int i=range_min; i<=range_max; i++) {
+                if ((pid = fork()) < 0) {                   //fail
                     printf("Erro na criação do fork!");
                     abort();
                 }
-                else if (pids[j] == 0) {
+                else if (pid == 0) {                        //child
                     printf("%.0f ", fib(i));
                     exit(0);
                 }
-            }
-
-            while (n_children > 0) {
-                wait(NULL);
-                n_children--;
+                else {                                      //parent
+                    wait(NULL);
+                }
             }
 
         }
