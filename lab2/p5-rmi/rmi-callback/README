@@ -1,0 +1,40 @@
+
+Instructions for running RMI source code examples.
+--------------------------------------------------
+
+1. Compile all source files.
+
+2. Generate the stub and skeleton class files using RMIC.
+
+	rmic RemoteDateImpl
+
+	rmic DateObjectImpl
+
+3. Start the registry (rmiregistry)
+
+On UNIX/Linux/OS X, enter
+
+	rmiregistry &
+
+On Windows, enter
+
+	start rmiregistry
+
+4. Create the remote object 
+
+	java RemoteDateImpl
+
+This registers the remote date on the server with the RMI registry.
+
+5. Start the client
+
+	java Client <host address>
+
+i.e.
+
+	java Client 127.0.0.1
+
+
+It is possible to have the server download the class files to the client. For
+details how to do this, please consult the RMI homepage at
+http://java.sun.com/products/jdk/rmi

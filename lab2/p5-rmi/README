@@ -1,0 +1,56 @@
+
+Instructions for running RMI source code examples.
+--------------------------------------------------
+
+This is organized into three directories:
+
+(1) client - which contains the RMIClient code.
+
+(2) server - which contains the RemoteDate interface and implementation.
+
+(3) rmi-callback - which provides an example of performing an RMI callback (this is an example that is not in the text.) A callback allows the server to invoke a remote method on the client.
+
+Compilation instructions for the rmi-callback example are contained in the README in the rmi-callback directory.
+
+To run the remote date  files
+
+SERVER
+------
+1. Compile all source files.
+
+2. Generate the stub and skeleton class files using RMIC (This is only necessary for those using
+pre-Java 5.0 compilers.)
+
+	rmic RemoteDateImpl
+
+3. Start the registry (rmiregistry)
+
+On UNIX/Linux/OS X, enter
+
+	rmiregistry &
+
+On Windows, enter
+
+	start rmiregistry
+
+4. Create the remote object 
+
+	java RemoteDateImpl
+
+This registers the remote date on the server with the RMI registry.
+
+CLIENT
+------
+
+*** Make sure the files RemoteDate.class and RemoteDateImpl_Stub.class are in the client directory!!!
+
+1. Compile RemoteDate.java
+
+2. Start the client
+
+	java RMIClient
+
+
+It is possible to have the server download the class files to the client. For
+details how to do this, please consult the RMI homepage at
+http://java.sun.com/products/jdk/rmi
