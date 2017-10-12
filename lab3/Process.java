@@ -15,7 +15,7 @@ public class Process {
         this.priority = priority;
         this.turnAround = 0;
         this.waitingTime = 0;
-        this.responseTime = -1;
+        this.responseTime = 0;
     }
 
     public Process(Process p) {
