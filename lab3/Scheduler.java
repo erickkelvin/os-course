@@ -1,9 +1,7 @@
 import java.io.*;
 import java.util.*;
-
-import jdk.nashorn.internal.runtime.FindProperty;
-
-import java.math.*;
+import static java.nio.file.StandardOpenOption.*;
+import java.nio.file.*;
 
 public class Scheduler {
 
@@ -27,9 +25,9 @@ public class Scheduler {
         else if (algoName.equals("sjfp")) { outputList = sjfp(inputList); }
         else if (algoName.equals("priority")) { outputList = priority(inputList); }
         else if (algoName.equals("priorityp")) { outputList = priorityp(inputList); }
-        else if (algoName.equals("rr")) { outputList = rr(inputList); }
+        else if (algoName.equals("rr")) { outputList = rr(inputList, 5); }
 
-        printList(outputList);
+        printList(outputList, algoName);
 
         printStatistics(outputList, algoName);
     }
@@ -69,17 +67,30 @@ public class Scheduler {
         return list; 
     }
 
-    public static void printList(List<Process> list) {
-        System.out.println("-----------------------------------------");
-        System.out.println("| SCHEDULED PROCESSES\t\t\t|\n-----------------------------------------");
+    public static void printList(List<Process> list, String algoName) {
+        String output = "";
+        output += "-----------------------------------------\n";
+        output += "| SCHEDULED PROCESSES: " + algoName + "\t\t|\n-----------------------------------------\n";
         for (int i=0; i<list.size(); i++) {
-            System.out.println("| P" + list.get(i).id + ":  " + list.get(i).turnAround + "\t\t\t\t|");
+            output += "| P" + list.get(i).id + ":  " + list.get(i).turnAround + "\t\t\t\t|\n";
         }
-        System.out.println("-----------------------------------------\n");
+        output += "-----------------------------------------\n";
+
+        System.out.println(output);
+        byte data[] = output.getBytes();
+        Path p = Paths.get("./output-" + algoName + ".txt");
+    
+        try (OutputStream out = new BufferedOutputStream(
+            Files.newOutputStream(p, CREATE, WRITE))) {
+            out.write(data, 0, data.length);
+        } 
+        catch (IOException e) {
+            System.err.println(e);
+        }
     }
 
     public static void printStatistics(List<Process> list, String algoName) {
-        int totalContextSwitch = (int)totalBurst - 1;
+        int totalContextSwitch = list.size() - 1;
         double totalTurnaround = 0;
         double totalWaitingTime = 0;
         double totalResponseTime = 0;
@@ -231,8 +242,7 @@ public class Scheduler {
         return list;
     }
     
-    public static List<Process> rr(List<Process> list) {
-
+    public static List<Process> rr(List<Process> list, int quantum) {
         return list;
     }
 
