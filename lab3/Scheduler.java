@@ -18,7 +18,7 @@ public class Scheduler {
         List<Process> inputList = new ArrayList<Process>();
         List<Process> outputList = new ArrayList<Process>();
         
-        inputList = initData(args[0], inputList);
+        inputList = initData(fileName, inputList);
         
         System.out.println("\n### PROCESS SCHEDULER ### \n");
 
@@ -29,7 +29,6 @@ public class Scheduler {
         else if (algoName.equals("priorityp")) { outputList = priorityp(inputList); }
         else if (algoName.equals("rr")) { outputList = rr(inputList); }
 
-        System.out.println("\n\n# OUTPUT: \n-----------------------");
         printList(outputList);
 
         printStatistics(outputList, algoName);
@@ -71,25 +70,19 @@ public class Scheduler {
     }
 
     public static void printList(List<Process> list) {
+        System.out.println("-----------------------------------------");
+        System.out.println("| SCHEDULED PROCESSES\t\t\t|\n-----------------------------------------");
         for (int i=0; i<list.size(); i++) {
-            System.out.println("P" + list.get(i).id);
-            //System.out.println("Arrival Time: \t" + list.get(i).arrivalTime);
-            //System.out.println("Burst Time: \t" + list.get(i).burstTime);
-            //System.out.println("Priority: \t" + list.get(i).priority);
-            if ((list.get(i).waitingTime>-1)&&(list.get(i).turnAround>-1)) {
-                System.out.println("Waiting Time: \t" + list.get(i).waitingTime);
-                System.out.println("Turnaround: \t" + list.get(i).turnAround);
-                System.out.println("Response Time: \t" + list.get(i).responseTime);
-            }
-            System.out.println("-----------------------");
+            System.out.println("| P" + list.get(i).id + ":  " + list.get(i).turnAround + "\t\t\t\t|");
         }
+        System.out.println("-----------------------------------------\n");
     }
 
     public static void printStatistics(List<Process> list, String algoName) {
         int totalContextSwitch = (int)totalBurst - 1;
-        int totalTurnaround = 0;
-        int totalWaitingTime = 0;
-        int totalResponseTime = 0;
+        double totalTurnaround = 0;
+        double totalWaitingTime = 0;
+        double totalResponseTime = 0;
         for (int i=0; i<list.size(); i++) {
             totalTurnaround += list.get(i).turnAround;
             totalWaitingTime += list.get(i).waitingTime;
@@ -101,12 +94,12 @@ public class Scheduler {
         System.out.println("| Algorithm:\t\t\t" + algoName + "\t|");
         System.out.println("| \t\t\t\t\t|");
         System.out.println("| Processing time (total):\t" + (int)totalBurst + "\t|");
-        //System.out.println("| CPU Usage:\t\t\t" + ((totalBurst/(totalBurst + totalContextSwitch))*100) + "%" + "\t|");
+        System.out.printf("| CPU Usage:\t\t\t%.2f%%\t|\n", ((totalBurst/(totalBurst + totalContextSwitch))*100));
         System.out.printf("| Throughput (average):\t\t%.2f \t|\n", list.size()/totalBurst);
-        System.out.println("| Turnaround (average):\t\t" + totalTurnaround/list.size() + "\t|");
-        System.out.println("| Waiting (average):\t\t" + totalWaitingTime/list.size() + "\t|");
-        System.out.println("| Response time (average):\t" + totalResponseTime/list.size() + "\t|");
-        //System.out.println("| Context switch (average):\t" + ?? + "\t|");
+        System.out.printf("| Turnaround (average):\t\t%.2f\t|\n", totalTurnaround/list.size());
+        System.out.printf("| Waiting (average):\t\t%.2f\t|\n", totalWaitingTime/list.size());
+        System.out.printf("| Response time (average):\t%.2f\t|\n", totalResponseTime/list.size());
+        System.out.println("| Context switch (average):\t" + totalContextSwitch/list.size() + "\t|");
         System.out.println("| Number of processes:\t\t" + list.size() + "\t|");
         System.out.println("-----------------------------------------");
     }
@@ -118,10 +111,8 @@ public class Scheduler {
         List<Process> result = new ArrayList<Process>();
 
         for(int slot=0; slot<totalBurst; slot++) {
-            System.out.println("slot: " + slot);
             for(int k=0; k<list.size(); k++) {
                 if ((list.get(k).arrivalTime <= slot)) {
-                    System.out.println(" id: " + list.get(k).id + " wait: " + list.get(k).waitingTime);
                     if (executing == null) {
                         Process p = new Process(list.get(k));
                         executing = p;
