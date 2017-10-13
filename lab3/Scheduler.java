@@ -32,6 +32,7 @@ public class Scheduler {
         printStatistics(outputList, algoName);
     }
 
+    //get, parse and initialize data with objects
     public static List<Process> initData(String fileName, List<Process> list) {
         String line;
         try {
@@ -67,6 +68,7 @@ public class Scheduler {
         return list; 
     }
 
+    //print and save a file with scheduled processes
     public static void printList(List<Process> list, String algoName) {
         String output = "";
         output += "-----------------------------------------\n";
@@ -89,8 +91,9 @@ public class Scheduler {
         }
     }
 
+    //print statistics
     public static void printStatistics(List<Process> list, String algoName) {
-        int totalContextSwitch = list.size() - 1;
+        int totalContextSwitch = totalSlots - 1;
         double totalTurnaround = 0;
         double totalWaitingTime = 0;
         double totalResponseTime = 0;
@@ -115,6 +118,9 @@ public class Scheduler {
         System.out.println("-----------------------------------------");
     }
 
+    /* NON-PREEMPTIVE ALGORITHMS */
+
+    //common function to non-preemptive algorithms
     public static List<Process> nonPreemptive(List<Process> list) {
         Process executing = null;
         int executingBurst = 0;
@@ -153,13 +159,16 @@ public class Scheduler {
                 executingBurst = 0;
             }
         }
+        totalSlots = result.size();
         return result;
     }
 
+    //first-come, first-serve
     public static List<Process> fcfs(List<Process> list) {
         return nonPreemptive(list);
     }
 
+    //shortest-job first
     public static List<Process> sjf(List<Process> list) {
         Collections.sort(list, new Comparator<Process>() {
             public int compare(Process p1, Process p2) {
@@ -170,64 +179,7 @@ public class Scheduler {
         return nonPreemptive(list);
     }
 
-    public static List<Process> sjfp(List<Process> list) {
-        Collections.sort(list, new Comparator<Process>() {
-            public int compare(Process p1, Process p2) {
-                return p1.burstTime - p2.burstTime;
-            }
-        });
-
-        int[] count = new int[list.size()];
-        int i = 0; //current process index
-        for(int slot=0; slot<totalBurst; slot++) {
-
-            //new process has arrived and it's waiting
-            for(int j=0; j<list.size(); j++) {
-                if ((list.get(j).arrivalTime < slot) && (i!=j) && (list.get(j).burstTime>0)) {
-                    if (list.get(j).burstTime <= list.get(i).burstTime) {
-                        i = j;
-                        break;
-                    }
-                }
-            }
-
-            if (count[i]==0) list.get(i).responseTime = list.get(i).waitingTime;
-            count[i]++;
-            
-            list.get(i).burstTime--;
-            list.get(i).turnAround++;
-            
-
-            for(int j=0; j<list.size(); j++) {
-                if ((list.get(j).burstTime>0)&&(list.get(j).arrivalTime < slot)&&(i!=j)) {
-                    list.get(j).turnAround++;
-                    list.get(j).waitingTime++;
-                }
-                    
-            }
-            
-            //check if a process finished executing
-            boolean found = false;
-            if (list.get(i).burstTime == 0) {
-                for (int k=0; k<list.size(); k++) {
-                    if ((list.get(k).burstTime>0)&&(found==false)&&((list.get(k).arrivalTime<=slot))) {
-                        System.out.println("i: " + i + " k: " + k + " slot: " + slot);
-                        i = k;
-                        found = true;
-                    }
-                    else if ((list.get(k).burstTime>0)&&(i!=k)){
-                        list.get(k).turnAround++;
-                        list.get(k).waitingTime++;
-                    }
-                }
-                found = false;
-            }
-
-        }
-
-        return list;
-    }
-
+    //priority
     public static List<Process> priority(List<Process> list) {
         Collections.sort(list, new Comparator<Process>() {
             public int compare(Process p1, Process p2) {
@@ -238,10 +190,27 @@ public class Scheduler {
         return nonPreemptive(list);
     }
 
+    /* PREEMPTIVE ALGORITHMS */
+
+    //shortest-job first (preemptive)
+    public static List<Process> sjfp(List<Process> list) {
+        Collections.sort(list, new Comparator<Process>() {
+            public int compare(Process p1, Process p2) {
+                return p1.burstTime - p2.burstTime;
+            }
+        });
+
+        
+
+        return list;
+    }
+
+    //priority (preemptive)
     public static List<Process> priorityp(List<Process> list) {
         return list;
     }
     
+    //round-robin
     public static List<Process> rr(List<Process> list, int quantum) {
         return list;
     }
