@@ -1,3 +1,5 @@
+//Author: Erick Santos
+
 public class Process {
     public int id = -1;
     public int arrivalTime = -1;
@@ -8,6 +10,8 @@ public class Process {
     public int waitingTime = -1;
     public int responseTime = -1;
 
+    public int remainingBurst = -1;
+
     public Process(int id, int arrivalTime, int burstTime, int priority) {
         this.id = id;
         this.arrivalTime = arrivalTime;
@@ -16,6 +20,7 @@ public class Process {
         this.turnAround = 0;
         this.waitingTime = 0;
         this.responseTime = 0;
+        this.remainingBurst = this.burstTime;
     }
 
     public Process(Process p) {
@@ -26,5 +31,6 @@ public class Process {
         this.turnAround = p.turnAround;
         this.waitingTime = p.waitingTime;
         this.responseTime = p.responseTime;
+        this.remainingBurst = p.remainingBurst;
     }
 }
